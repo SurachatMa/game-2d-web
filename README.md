@@ -1,4 +1,4 @@
-# Aetherfall — Lunaris (web build)
+# NewWorld — Lunaris (web build)
 
 Exported Godot 4.7 web build of the private `game-2d` project. Play: https://surachatma.github.io/game-2d-web/
 

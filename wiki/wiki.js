@@ -1,9 +1,10 @@
-// Aetherfall — Lunaris web wiki. Hash-routed single page; every number comes
+// Game web wiki (name comes from scripts/brand.gd via the export). Hash-routed single page; every number comes
 // from data/wiki-data.js, which tools/wiki/ exports from the game scripts.
 "use strict";
 const D = window.WIKI_DATA;
 const G = D.game;
 const C = G.catalog;
+const B = G.brand;
 const $ = (s, el = document) => el.querySelector(s);
 const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const pct = v => (v >= 0.1 || v === 0 ? Math.round(v * 100) : +(v * 100).toFixed(1)) + "%";
@@ -172,8 +173,8 @@ function home() {
   return `
   <section class="hero panel">
     <div>
-      <div class="eyebrow">Aetherfall — Lunaris · Game Wiki</div>
-      <h1>วิกิ Aetherfall</h1>
+      <div class="eyebrow">${esc(B.title)} · Game Wiki</div>
+      <h1>วิกิ ${esc(B.name)}</h1>
       <p class="lead">ค้นหาอาชีพ สกิล มอนสเตอร์ ไอเทม แผนที่ และของดรอปทั้งหมดในเกม — ทุกตัวเลขส่งออกจาก source ของเกมโดยตรง ไม่ได้พิมพ์มือ</p>
       <input class="field" id="hero-q" type="search" placeholder="พิมพ์ชื่อไอเทม มอน หรือแผนที่…" aria-label="ค้นหาทั้งวิกิ" autocomplete="off">
       <div class="stats"><span class="pill gold">Lv สูงสุด ${G.formulas.base_cap}</span><span class="pill">${Object.keys(C.jobs).length} อาชีพ</span><span class="pill">${Object.keys(G.monsters).length} มอนสเตอร์</span><span class="pill">${Object.keys(G.zones).length} พื้นที่</span><span class="pill jade">ภาพตัวละครใหม่ ${Object.keys(D.art).length} แบบ</span></div>
@@ -420,7 +421,7 @@ function pets() {
 
 function quests() {
   const chain = Object.entries(C.quests);
-  return crumbs("เควสต์") + pageHead("Story", "สายเควสต์หลัก", "รับจาก Liora ผู้แนะนำที่ Aether Plaza ต้องทำต่อกันตามลำดับ") +
+  return crumbs("เควสต์") + pageHead("Story", "สายเควสต์หลัก", `รับจาก Liora ผู้แนะนำที่ ${esc(B.plaza)} ต้องทำต่อกันตามลำดับ`) +
     `<div class="chain section">${chain.map(([id, q]) => `<article class="panel"><div class="eyebrow">${esc(q.zone)}</div><h2 style="font-size:19px;margin:4px 0 8px">${esc(q.name)}</h2>
       <div class="tags">${Object.entries(q.objectives).map(([k, n]) => G.monsters[k] ? `<a class="pill rose" href="#/monster/${k}">กำจัด ${esc(G.monsters[k].name)} ×${n}</a>` : `<a class="pill jade" href="#/item/${k}">เก็บ ${esc(itemName(k))} ×${n}</a>`).join("")}</div>
       <div class="tags"><span class="pill gold">Base ${q.base}</span><span class="pill gold">Job ${q.job}</span><span class="pill gold">${q.lumen} Lumen</span>${Object.entries(q.items).map(([k, n]) => `<a class="pill" href="#/item/${k}">${esc(itemName(k))} ×${n}</a>`).join("")}</div>
@@ -493,7 +494,7 @@ function route() {
 function setTitle(page, arg) {
   const tab = TABS.find(t => t[0] === (TAB_OF[page] ?? page));
   const name = arg ? (C.items[arg]?.name || G.monsters[arg]?.name || C.skills[arg]?.name || decodeURIComponent(arg)) : null;
-  document.title = [name, tab && tab[0] ? tab[1] : null, "วิกิ Aetherfall"].filter(Boolean).join(" · ");
+  document.title = [name, tab && tab[0] ? tab[1] : null, "วิกิ " + B.name].filter(Boolean).join(" · ");
 }
 function wirePage() {
   const hq = $("#hero-q"); if (hq) wireSearch(hq);
@@ -522,6 +523,8 @@ document.addEventListener("keydown", e => { const z = e.target.closest?.("[data-
 $("#viewer-close").addEventListener("click", () => $("#viewer").close());
 $("#viewer").addEventListener("click", e => { if (e.target === $("#viewer")) $("#viewer").close(); });
 
+$("#brand-name").textContent = B.name.toUpperCase();
+$("#brand-sub").textContent = B.subtitle.toUpperCase() + " · วิกิ";
 $("#exported").textContent = "ส่งออกล่าสุด " + G.exported.replace("T", " ") + " UTC";
 wireSearch($("#q"));
 window.addEventListener("hashchange", route);
